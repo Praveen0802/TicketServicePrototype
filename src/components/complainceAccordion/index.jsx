@@ -9,7 +9,6 @@ import chevronleft from "../../../public/chevronleft.svg";
 const ComplianceAccordion = () => {
   const [activePanel, setActivePanel] = useState(0);
   const [selectedRows, setSelectedRows] = useState([false, true, false]);
-  // Create refs for each panel's table container
   const tableContainerRefs = useRef([]);
 
   const togglePanel = (index) => {
@@ -22,7 +21,6 @@ const ComplianceAccordion = () => {
     setSelectedRows(updatedRows);
   };
 
-  // Function to handle scroll left
   const scrollLeft = (e) => {
     e.stopPropagation();
     const tableContainer = tableContainerRefs.current[activePanel];
@@ -31,7 +29,7 @@ const ComplianceAccordion = () => {
     }
   };
 
-  // Function to handle scroll right
+ 
   const scrollRight = (e) => {
     e.stopPropagation();
     const tableContainer = tableContainerRefs.current[activePanel];
@@ -400,7 +398,7 @@ const ComplianceAccordion = () => {
                                 className="w-4 h-4"
                               />
                             </td>
-                            <td className="p-2 border-[1px] text-[12px] border-[#ECEDF2] text-[12px]">
+                            <td className="p-2 border-[1px]  border-[#ECEDF2] text-[12px]">
                               <select className="w-full border border-gray-300 rounded p-2">
                                 <option>{row.ticketType}</option>
                               </select>
