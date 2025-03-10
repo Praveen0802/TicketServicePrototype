@@ -1,9 +1,16 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { ChevronUp, ChevronDown, Edit, Download, Move } from "lucide-react";
+import greenHand from "../../../public/greenHand.svg";
+import Hand from "../../../public/hand.svg";
+import Image from "next/image";
+import chevronRight from "../../../public/chevronRight.svg";
+import chevronleft from "../../../public/chevronleft.svg";
 
 const ComplianceAccordion = () => {
   const [activePanel, setActivePanel] = useState(0);
   const [selectedRows, setSelectedRows] = useState([false, true, false]);
+  // Create refs for each panel's table container
+  const tableContainerRefs = useRef([]);
 
   const togglePanel = (index) => {
     setActivePanel(activePanel === index ? null : index);
@@ -15,6 +22,24 @@ const ComplianceAccordion = () => {
     setSelectedRows(updatedRows);
   };
 
+  // Function to handle scroll left
+  const scrollLeft = (e) => {
+    e.stopPropagation();
+    const tableContainer = tableContainerRefs.current[activePanel];
+    if (tableContainer) {
+      tableContainer.scrollBy({ left: -200, behavior: 'smooth' });
+    }
+  };
+
+  // Function to handle scroll right
+  const scrollRight = (e) => {
+    e.stopPropagation();
+    const tableContainer = tableContainerRefs.current[activePanel];
+    if (tableContainer) {
+      tableContainer.scrollBy({ left: 200, behavior: 'smooth' });
+    }
+  };
+
   const ticketData = [
     {
       match: "Chelsea vs Arsenal - Premier League",
@@ -24,6 +49,7 @@ const ComplianceAccordion = () => {
       rows: [
         {
           ticketType: "E-ticket",
+          greenHand: true,
           quantity: 5,
           splitType: "Split Type",
           maxDisplay: 5,
@@ -159,9 +185,10 @@ const ComplianceAccordion = () => {
     },
   ];
 
+  const borderStyle = "border-[1px] border-[#ECEDF2]";
+
   return (
-    // Container with fixed width and margin on all sides
-    <div className="bg-[#e8ebfc] pb-[50px]">
+    <div className="bg-[#e8ebfc] pb-[100px]">
       <div className="mx-4 my-4 max-w-full ">
         {ticketData.map((item, panelIndex) => (
           <div
@@ -169,23 +196,21 @@ const ComplianceAccordion = () => {
             className="mb-4 rounded-lg overflow-hidden border border-gray-200"
           >
             <div
-              className={`flex items-center justify-between p-4 cursor-pointer ${
-                activePanel === panelIndex ? "bg-indigo-900" : "bg-indigo-900"
-              } text-white`}
+              className={`flex items-center justify-between p-4 cursor-pointer bg-[#130061] text-white`}
               onClick={() => togglePanel(panelIndex)}
             >
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-4 overflow-auto">
                 <div className="flex items-center justify-center w-6 h-6">
                   <input
                     type="radio"
                     name="ticket"
                     checked={activePanel === panelIndex}
                     readOnly
-                    className="w-5 h-5"
+                    className="w-5 h-5 accent-white "
                   />
                 </div>
 
-                <div className="flex items-center space-x-6 overflow-x-auto">
+                <div className="flex text-[14px] items-center space-x-6 overflow-x-auto">
                   <div className="font-medium whitespace-nowrap">
                     {item.match}
                   </div>
@@ -215,7 +240,7 @@ const ComplianceAccordion = () => {
                       <path d="M16 2V6" stroke="currentColor" strokeWidth="2" />
                       <path d="M8 2V6" stroke="currentColor" strokeWidth="2" />
                     </svg>
-                    <span>{item.date}</span>
+                    <span className=" text-[14px]">{item.date}</span>
                   </div>
 
                   <div className="flex items-center space-x-2 whitespace-nowrap">
@@ -239,7 +264,7 @@ const ComplianceAccordion = () => {
                         strokeWidth="2"
                       />
                     </svg>
-                    <span>{item.time}</span>
+                    <span className=" text-[14px]">{item.time}</span>
                   </div>
 
                   <div className="flex items-center space-x-2 whitespace-nowrap">
@@ -270,7 +295,7 @@ const ComplianceAccordion = () => {
                         strokeWidth="2"
                       />
                     </svg>
-                    <span>{item.location}</span>
+                    <span className=" text-[14px]">{item.location}</span>
                   </div>
                 </div>
               </div>
@@ -286,49 +311,76 @@ const ComplianceAccordion = () => {
 
             {activePanel === panelIndex && item.rows && (
               <div className="bg-white relative">
-                <div className="overflow-x-auto" style={{ maxWidth: "100%" }}>
+                <div 
+                  className="overflow-x-auto" 
+                  style={{ maxWidth: "100%" }}
+                  ref={(el) => (tableContainerRefs.current[panelIndex] = el)}
+                >
                   <div style={{ width: "max-content", minWidth: "100%" }}>
                     <table className="w-full">
                       <thead>
-                        <tr className="bg-gray-50 border-b border-gray-200">
-                          <th className="w-12 p-3 text-left">
+                        <tr className=" border-b border-gray-200">
+                          <th className={` ${borderStyle}  p-2 text-left`}>
                             <input type="checkbox" className="w-4 h-4" />
                           </th>
-                          <th className="p-3  text-center text-sm font-medium text-gray-600">
+                          <th
+                            className={`p-2 text-[12px] text-[#7D82A4]  text-center text-sm font-medium  ${borderStyle}`}
+                          >
                             Ticket Type
                           </th>
-                          <th className="p-3 text-center text-sm font-medium text-gray-600">
+                          <th className="p-2 text-[12px] text-[#7D82A4] text-center border-[1px] border-[#ECEDF2] text-sm font-medium">
                             Quantity
                           </th>
-                          <th className="p-3 text-center text-sm font-medium text-gray-600">
+                          <th className="p-2 text-[12px] text-[#7D82A4] text-center border-[1px] border-[#ECEDF2]  text-sm font-medium">
                             Split Type
                           </th>
-                          <th className="p-3 text-center text-sm font-medium text-gray-600">
+                          <th className="p-2 text-[12px] text-[#7D82A4] text-center border-[1px] border-[#ECEDF2] text-sm font-medium">
                             Max Display
                           </th>
-                          <th className="p-3 text-center text-sm font-medium text-gray-600">
+                          <th className="p-2 text-[12px] text-[#7D82A4] text-center border-[1px] border-[#ECEDF2] text-sm font-medium">
                             Category
                           </th>
-                          <th className="p-3 text-center text-sm font-medium text-gray-600">
+                          <th className="p-2 text-[12px] text-[#7D82A4] text-center border-[1px] border-[#ECEDF2] text-sm font-medium">
                             Section/Block
                           </th>
-                          <th className="p-3 text-center text-sm font-medium text-gray-600">
+                          <th className="p-2 text-[12px] text-[#7D82A4] text-center border-[1px] border-[#ECEDF2] text-sm font-medium">
                             Row
                           </th>
-                          <th className="p-3 text-center text-sm font-medium text-gray-600">
+                          <th className="p-2 text-[12px] text-[#7D82A4] text-center border-[1px] border-[#ECEDF2] text-sm font-medium">
                             First Seat
                           </th>
-                          <th className="p-3 text-center text-sm font-medium text-gray-600">
+                          <th className="p-2 text-[12px] text-[#7D82A4] text-center border-[1px] border-[#ECEDF2] text-sm font-medium">
                             Face Value
                           </th>
-                          <th className="p-3 text-center text-sm font-medium text-gray-600">
+                          <th className="p-2 text-[12px] text-[#7D82A4] text-center border-[1px] border-[#ECEDF2] text-sm font-medium">
                             Payout Price
                           </th>
-                          <th className="p-3 text-center text-sm font-medium text-gray-600">
+                          <th className="p-2 text-[12px] text-[#7D82A4] text-center border-[1px] border-[#ECEDF2] text-sm font-medium">
                             Seating
                           </th>
-                          <th className="p-3 text-center text-sm font-medium text-gray-600 sticky right-0 bg-white shadow-lg">
-                            Actions
+                          <th className="p-2 h-[52px] w-full flex gap-2 items-center justify-center text-[12px] text-[#7D82A4] text-center border-[1px] border-[#ECEDF2] text-sm font-medium sticky right-0 bg-white shadow-lg">
+                            <div 
+                              className="cursor-pointer"
+                              onClick={scrollLeft}
+                            >
+                              <Image
+                                src={chevronleft}
+                                alt="chevronleft"
+                                width={12}
+                                height={12}
+                              />
+                            </div>
+                            <div 
+                              className="cursor-pointer"
+                              onClick={scrollRight}
+                            >
+                              <Image
+                                src={chevronRight}
+                                alt="chevronRight"
+                                width={12}
+                                height={12}
+                              />
+                            </div>
                           </th>
                         </tr>
                       </thead>
@@ -340,7 +392,7 @@ const ComplianceAccordion = () => {
                               selectedRows[rowIndex] ? "bg-blue-50" : ""
                             }`}
                           >
-                            <td className="p-3">
+                            <td className="p-2 border-[1px] border-[#ECEDF2]">
                               <input
                                 type="checkbox"
                                 checked={selectedRows[rowIndex]}
@@ -348,65 +400,65 @@ const ComplianceAccordion = () => {
                                 className="w-4 h-4"
                               />
                             </td>
-                            <td className="p-3">
+                            <td className="p-2 border-[1px] text-[12px] border-[#ECEDF2] text-[12px]">
                               <select className="w-full border border-gray-300 rounded p-2">
                                 <option>{row.ticketType}</option>
                               </select>
                             </td>
-                            <td className="p-3">
+                            <td className="p-2 border-[1px] border-[#ECEDF2] text-[12px]">
                               <input
-                                type="number"
+                                type="text"
                                 className="w-16 border border-gray-300 rounded p-2"
                                 value={row.quantity}
                               />
                             </td>
-                            <td className="p-3">
+                            <td className="p-2 border-[1px] border-[#ECEDF2] text-[12px]">
                               <select className="w-full border border-gray-300 rounded p-2">
                                 <option>{row.splitType}</option>
                               </select>
                             </td>
-                            <td className="p-3">
+                            <td className="p-2 border-[1px] border-[#ECEDF2] text-[12px]">
                               <input
                                 type="number"
                                 className="w-16 border border-gray-300 rounded p-2"
                                 value={row.maxDisplay}
                               />
                             </td>
-                            <td className="p-3">
+                            <td className="p-2 border-[1px] border-[#ECEDF2] text-[12px]">
                               <select className="w-full border border-gray-300 rounded p-2">
                                 <option>{row.category}</option>
                               </select>
                             </td>
-                            <td className="p-3">
+                            <td className="p-2 border-[1px] border-[#ECEDF2] text-[12px]">
                               <select className="w-full border border-gray-300 rounded p-2">
                                 <option>{row.block}</option>
                               </select>
                             </td>
-                            <td className="p-3">
+                            <td className="p-2 border-[1px] border-[#ECEDF2] text-[12px]">
                               <input
                                 type="number"
                                 className="w-16 border border-gray-300 rounded p-2"
                                 value={row.row}
                               />
                             </td>
-                            <td className="p-3">
+                            <td className="p-2 border-[1px] border-[#ECEDF2] text-[12px]">
                               <input
                                 type="number"
                                 className="w-16 border border-gray-300 rounded p-2"
                                 value={row.firstSeat}
                               />
                             </td>
-                            <td className="p-3">
-                              <div className="flex items-center">
-                                <span className="mr-2">£</span>
+                            <td className="p-2 border-[1px] border-[#ECEDF2] text-[12px]">
+                              <div className="flex border border-gray-300 rounded-md items-center">
+                                <span style={{borderRight:'1px solid #ECEDF2'}} className="p-2">£</span>
                                 <input
                                   type="text"
-                                  className="w-24 border border-gray-300 rounded p-2"
+                                  className="w-24 b rounded p-2"
                                   value={row.faceValue.replace("£", "")}
                                 />
                               </div>
                             </td>
-                            <td className="p-3">
+                            <td className="p-2 border-[1px] border-[#ECEDF2] text-[12px]">
                               <div className="flex items-center">
                                 <span className="mr-2">£</span>
                                 <input
@@ -416,15 +468,20 @@ const ComplianceAccordion = () => {
                                 />
                               </div>
                             </td>
-                            <td className="p-3">
+                            <td className="p-2 border-[1px] border-[#ECEDF2] text-[12px]">
                               <select className="w-full border border-gray-300 rounded p-2">
                                 <option>{row.seating}</option>
                               </select>
                             </td>
-                            <td className="p-3 text-center sticky right-0 bg-white shadow-lg">
+                            <td className="p-2 border-[1px] border-[#ECEDF2] text-[12px] text-center sticky right-0 bg-white shadow-lg">
                               <div className="flex justify-center space-x-2">
                                 <button className="p-2 text-gray-600 hover:text-blue-600">
-                                  <Move className="w-5 h-5 cursor-pointer" />
+                                  <Image
+                                    src={row.greenHand ? greenHand : Hand}
+                                    alt="greenHand"
+                                    width={20}
+                                    height={20}
+                                  />
                                 </button>
                                 <button className="p-2 text-gray-600 hover:text-blue-600">
                                   <Download className="w-5 h-5 cursor-pointer" />
